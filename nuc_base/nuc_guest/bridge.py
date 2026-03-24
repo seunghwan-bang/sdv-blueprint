@@ -2,6 +2,8 @@ import serial, sys, re
 
 PORT_STICK = "/dev/arduino_joystick"
 PORT_LED = "/dev/arduino_led"
+#PORT_STICK = "/dev/ttyACM0"
+#PORT_LED = "/dev/ttyACM1"
 BAUD = 115200
 
 def parse_x_btn(line: str):

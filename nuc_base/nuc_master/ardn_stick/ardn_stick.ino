@@ -13,26 +13,26 @@ const int yPin = A1;  //the VRY attach to
 const int swPin = 8;  //the SW attach to
 
 void setup() {
-  Serial.begin(115200);
-  while (!Serial) { }
-  pinMode(swPin, INPUT_PULLUP);
-  Serial.println("ts_ms, x, y, btn");
+    Serial.begin(115200);
+    while (!Serial) { }
+    pinMode(swPin, INPUT_PULLUP);
+    Serial.println("ts_ms, x, y, btn");
 }
 
 void loop() {
-  unsigned long t = millis();
-  int x = analogRead(xPin);
-  int y = analogRead(yPin);
-  int btn = digitalRead(swPin);
+    unsigned long t = millis();
+    int x = analogRead(xPin);
+    int y = analogRead(yPin);
+    int btn = digitalRead(swPin);
 
-  Serial.print(t);
-  Serial.print(",");
-  Serial.print(x);
-  Serial.print(",");
-  Serial.print(y);
-  Serial.print(",");
-  Serial.println(btn);
+    Serial.print(t);
+    Serial.print(",");
+    Serial.print(x);
+    Serial.print(",");
+    Serial.print(y);
+    Serial.print(",");
+    Serial.println(btn);
 
-  delay(50);
+    delay(50);
 }
 
