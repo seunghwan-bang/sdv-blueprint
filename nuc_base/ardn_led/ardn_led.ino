@@ -86,27 +86,13 @@ void applyMode(int mode) {
   lastMode = mode;
 }
 
-//void applyBtn(int btn) {
-//  if (btn == lastBtn) return;
-//  if (btn == 0) {
-//    showOnlyCenters(RED);
-//  } else if (btn == 1) {
-//    showAll(OFF);
-//  } else {
-//    return;
-//  }
-//
-//  lastBtn = btn;
-//  lastBtnChangeMs = millis();
-//}
-
 void setup() {
   strip.setBrightness(100);
   strip.begin();
   showAll(OFF);
 
   Serial.begin(115200);
-  // while (!Serial) { }
+  while (!Serial) { }
   lastRxMs = millis();
 }
 
@@ -127,24 +113,6 @@ bool parse_x_btn(const char* s, int& x_out, int& btn_out) {
   }
 
   return false;
-}
-
-int parseButtonFromLine(const char* s) {
-  int lastDigit = -1;
-  for (size_t i = 0; s[i]; ++i) {
-    if (s[i] == '0' || s[i] =='1') {
-      lastDigit = s[i] - '0';
-    }
-  }
-  return lastDigit;
-}
-
-void handleButton(int btn) {
-  if (btn == 0) {
-    showAll(RED);
-  } else if (btn == 1) {
-    showAll(OFF);
-  }
 }
 
 void loop() {
@@ -200,12 +168,3 @@ void loop() {
     lastRxMs = millis();
   }
 }
-
-//static void chase(uint32_t c) {
-//  for(uint16_t i=0; i<strip.numPixels()+4; i++) {
-//      strip.setPixelColor(i  , c); // i 번째 픽셀에 LED 색상 지정
-//      strip.setPixelColor(i-3, 0); // i-3 픽셀에 색상 0을 지정하여 지움
-//      strip.show(); // 
-//      delay(10);
-//  }
-//} 
