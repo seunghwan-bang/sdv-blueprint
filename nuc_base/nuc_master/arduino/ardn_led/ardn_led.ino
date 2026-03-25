@@ -8,10 +8,10 @@ const uint32_t RED = Adafruit_NeoPixel::Color(255, 0, 0);
 const uint32_t YELLOW = Adafruit_NeoPixel::Color(255, 180, 0);
 const uint32_t OFF = 0;
 
-const int LEFT_ON = 200;
-const int LEFT_OFF = 260;
-const int RIGHT_ON = 823;
-const int RIGHT_OFF = 763;
+const int LEFT_ON = 300;
+const int LEFT_OFF = 323;
+const int RIGHT_OFF = 700;
+const int RIGHT_ON = 723;
 
 char lineBuf[64];
 size_t lineLen = 0;

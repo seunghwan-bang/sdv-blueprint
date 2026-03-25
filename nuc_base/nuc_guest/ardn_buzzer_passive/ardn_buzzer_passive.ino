@@ -5,6 +5,7 @@
 //*******************************************************************************
 
 int DigitalPin = 7;  // Digital input
+
 void setup()
 {
     pinMode(DigitalPin, OUTPUT);

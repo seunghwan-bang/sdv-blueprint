@@ -1,0 +1,35 @@
+configs:
+  vss_overlay.json:
+    file: "./spec/vss.json"
+
+services:
+  bridge-joystick:
+    build:
+      context: ./bridge-joystick
+    container_name: bridge-joystick
+    #network_mode: "host"
+    devices:
+      - "/dev/arduino_joystick:/dev/arduino_joystick"
+      - "/dev/arduino_led:/dev/arduino_led"
+    volumes:
+      - ./bridge-joystick:/app
+    working_dir: /app
+    command: python3 bridge.py
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  databroker:
+    image: "quay.io/eclipse-kuksa/kuksa-databroker:0.6.0"
+    container_name: "databroker"
+    #network_mode: "host"
+    ports:
+      - "55555:55555"
+    configs:
+      - "vss_overlay.json"
+    environment:
+      KUKSA_DATABROKER_ADDR: "0.0.0.0"
+      KUKSA_DATABROKER_PORT: "55555"
+      KUKSA_DATABROKER_METADATA_FILE: "/vss_overlay.json"
+      RUST_LOG: "info"
+    # for the time being, we do not use TLS secured connections to Databroker
+    command: "--insecure"
