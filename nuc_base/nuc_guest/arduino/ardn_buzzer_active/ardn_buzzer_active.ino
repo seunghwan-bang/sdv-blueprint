@@ -5,7 +5,6 @@
 //*******************************************************************************
 
 int DigitalPin = 7;  // Digital input
-bool condition = true;
 
 void setup()
 {
@@ -16,16 +15,8 @@ void setup()
 
 void loop()
 {
-    if (Serial.available() > 0) {
-        condition = !condition;
-        Serial.println(condition);
-    }
-
-    if (!condition) {
-        digitalWrite(DigitalPin, LOW);
-        delay(1000);
-    } else {
-        digitalWrite(DigitalPin, HIGH);
-        delay(1000);
-    }
+    digitalWrite(DigitalPin, HIGH);
+    delay(100);
+    digitalWrite(DigitalPin, LOW);
+    delay(10000);
 }

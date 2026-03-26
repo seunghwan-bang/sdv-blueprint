@@ -12,13 +12,18 @@ def recv_to_databroker(client):
         #l = client.getValue("Vehicle.Body.Lights.DirectionIndicator.Left.IsSignaling")
         #r = client.getValue("Vehicle.Body.Lights.DirectionIndicator.Right.IsSignaling")
         b = client.getValue("Vehicle.Body.Lights.Brake.IsActive")
-        # b is {'value': 'ACTIVE'} or {'value': 'INACTIVE'} dict or JSON
+
         if isinstance(b, str):
             b = json.loads(b)
         val = b.get('value') if isinstance(b, dict) else None
-        if val == 'ACTIVE':
+
+        if isinstance(val, str):
+            val = json.loads(va)
+        isBrake = val.get('value') if isinstance(val, dict) else None
+
+        if isBrake == 'ACTIVE':
             return True
-        elif val == 'INACTIVE':
+        elif isBrake == 'INACTIVE':
             return False
         else:
             return None

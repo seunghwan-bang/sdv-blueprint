@@ -1,0 +1,5 @@
+# Active buzzer Arduino
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="3CDC75F04E2C", SYMLINK+="arduino_active"
+
+# Passive buzzer Arduino
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="3CDC75F03F08", SYMLINK+="arduino_passive"

@@ -15,20 +15,11 @@ void setup()
 
 void loop()
 {
-    int i;
-    for (i = 0; i <80; i++) {
-        digitalWrite(DigitalPin, HIGH);
-        delay (1); // Delay 1ms
-        digitalWrite(DigitalPin, LOW);
-        delay (1); // delay 1ms
-    }
-    delay(1000);
+    // Play a tone with a frequency of 1000 Hz for 1 second
+    tone(DigitalPin, 1000, 100); 
+    delay(100); // Wait for the tone duration
 
-    for (i = 0; i <100; i++) {
-        digitalWrite(DigitalPin, HIGH) ;
-        delay(2); // delay 2ms
-        digitalWrite(DigitalPin, LOW) ;
-        delay(2); // delay 2ms
-    }
-    delay(1000);
+    // Stop the tone for 1 second (noTone() stops the current tone)
+    noTone(DigitalPin);
+    delay(10000);
 }
