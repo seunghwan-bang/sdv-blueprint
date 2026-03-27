@@ -55,6 +55,7 @@ def databroker_worker(client, q):
         q.task_done()
 
 def handle_pullpiri_yaml():
+    prev_yaml_state = -1
     with serial.Serial(PORT_GEAR, BAUD, timeout=0.1) as s_in:
         while True:
             raw = s_in.readline()
@@ -70,11 +71,17 @@ def handle_pullpiri_yaml():
 
             if line.isdigit():
                 if line == "0":
+                    if prev_yaml_state == 0:
+                        continue
+                    prev_yaml_state = 0
                     print("LOW FREQ")
                     send_yaml_artifact('/yaml/buzzer-active-terminate.yaml')
                     time.sleep(2)
                     send_yaml_artifact('/yaml/buzzer-passive-launch.yaml')
                 elif line == "1":
+                    if prev_yaml_state == 1:
+                        continue
+                    prev_yaml_state = 1
                     print("HIGH FREQ")
                     send_yaml_artifact('/yaml/buzzer-passive-terminate.yaml')
                     time.sleep(2)
