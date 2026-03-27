@@ -13,6 +13,7 @@ services:
       - "/dev/arduino_led:/dev/arduino_led"
     volumes:
       - ./serial-kuksa-bridge:/app
+      - ./pullpiri-yaml/yaml:/app/yaml
     working_dir: /app
     command: python3 bridge.py
     environment:

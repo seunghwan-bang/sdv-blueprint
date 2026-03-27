@@ -2,7 +2,7 @@
 #define PIN 6
 #define N_LEDS 8
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LEDS, PIN, NEO_GRB + NEO_KHZ800);   
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
 const uint32_t RED = Adafruit_NeoPixel::Color(255, 0, 0);
 const uint32_t YELLOW = Adafruit_NeoPixel::Color(255, 180, 0);
@@ -19,7 +19,7 @@ unsigned long lastRxMs = 0;
 const unsigned long RX_TIMEOUT_MS = 3000;
 
 int lastBtn = -1;
-int lastMode = -1;
+int lastMode = -1;w
 unsigned long lastBtnChangeMs = 0;
 const unsigned long DEBOUNCE_MS = 30;
 

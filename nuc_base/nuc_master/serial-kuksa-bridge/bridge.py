@@ -9,6 +9,7 @@ from kuksa_client.grpc import Datapoint
 
 PORT_STICK = "/dev/arduino_joystick"
 PORT_LED = "/dev/arduino_led"
+PORT_GEAR = "/dev/arduino_gear"
 BAUD = 115200
 
 def parse_x_btn(line: str):
@@ -50,6 +51,48 @@ def databroker_worker(client, q):
             print(f"Databroker send error: {e}", file=sys.stderr)
         q.task_done()
 
+def handle_pullpiri_yaml():
+    with serial.Serial(PORT_GEAR, BAUD, timeout=0.1) as s_in:
+        while True:
+            raw = s_in.readline()
+            if not raw:
+                continue
+            try:
+                line = raw.decode(errors="replace").strip()
+            except Exception as e:
+                print(f"Decode error: {e}", file=sys.stderr)
+                continue
+            if not line:
+                continue
+
+            if line.isdigit():
+                if line == "0":
+                    print("LOW FREQ")
+                    send_yaml_artifact('./yaml/buzzer-active-terminate.yaml')
+                    time.sleep(2)
+                    send_yaml_artifact('./yaml/buzzer-passive-launch.yaml')
+                elif line == "1":
+                    print("HIGH FREQ")
+                    send_yaml_artifact('./yaml/buzzer-passive-terminate.yaml')
+                    time.sleep(2)
+                    send_yaml_artifact('./yaml/buzzer-active-launch.yaml')
+            import requests
+            def send_yaml_artifact(yaml_path: str):
+                url = 'http://192.168.1.2:47099/api/artifact'
+                try:
+                    with open(yaml_path, 'r', encoding='utf-8') as f:
+                        body = f.read()
+                    headers = {'Content-Type': 'text/plain'}
+                    response = requests.post(url, headers=headers, data=body)
+                    print(f"[POST] {url} status={response.status_code}")
+                    if response.status_code != 200:
+                        print(f"Response: {response.text}")
+                except Exception as e:
+                    print(f"send_yaml_artifact error: {e}", file=sys.stderr)
+            else:
+                print(f"Message: {line}")
+            time.sleep(0.05)
+
 def main():
     with serial.Serial(PORT_STICK, BAUD, timeout=0) as s_in, \
          serial.Serial(PORT_LED, BAUD, timeout=0) as s_out:
@@ -64,6 +107,9 @@ def main():
         q = queue.Queue()
         t = threading.Thread(target=databroker_worker, args=(client, q), daemon=True)
         t.start()
+
+        t_gear = threading.Thread(target=handle_pullpiri_yaml, args=(), daemon=True)
+        t_gear.start()
 
         while True:
             raw = s_in.readline()
