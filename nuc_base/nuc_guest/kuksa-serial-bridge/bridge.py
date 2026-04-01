@@ -36,31 +36,32 @@ def recv_to_databroker(client):
         print(f"Databroker getValue error: {e}", file=sys.stderr)
         return None
 
-def main():
+
+def main(stop_event):
     client = KuksaClientThread(config={'protocol': 'grpc', 'ip': '192.168.1.2', 'port': 55555, 'insecure': True})
-    #client = KuksaClientThread(config={'url': 'grpc://192.168.1.2:55555', 'insecure': True})
     client.start()
-
-    #with serial.Serial(PORT_ACTIVE, BAUD, timeout=0) as s_ac, \
-    #     serial.Serial(PORT_PASSIVE, BAUD, timeout=0) as s_pa:
-    with serial.Serial(PORT_BUZZER, BAUD, timeout=0) as s_bz:
-        while True:
-            isBrake = recv_to_databroker(client)
-            print(f"isBrake: {isBrake}")
-
-            msg = b"1" if isBrake else b"0"
-            #s_ac.write(msg)
-            #s_pa.write(msg)
-            #s_ac.flush()
-            #s_pa.flush()
-            s_bz.write(msg)
-            s_bz.flush()
-
-            time.sleep(0.1)
+    while not stop_event.is_set():
+        try:
+            with serial.Serial(PORT_BUZZER, BAUD, timeout=0) as s_bz:
+                while not stop_event.is_set():
+                    isBrake = recv_to_databroker(client)
+                    print(f"isBrake: {isBrake}")
+                    msg = b"1" if isBrake else b"0"
+                    s_bz.write(msg)
+                    s_bz.flush()
+                    time.sleep(0.05)
+        except (serial.SerialException, OSError) as e:
+            print(f"Serial error: {e}. Reconnecting in 1 seconds...", file=sys.stderr)
+            time.sleep(1)
+        except Exception as e:
+            print(f"Unexpected error: {e}. Retrying in 1 seconds...", file=sys.stderr)
+            time.sleep(1)
 
 if __name__ == "__main__":
+    stop_event = threading.Event()
     try:
-        main()
+        main(stop_event)
     except KeyboardInterrupt:
         print("Stopped.")
+        stop_event.set()
         sys.exit(0)

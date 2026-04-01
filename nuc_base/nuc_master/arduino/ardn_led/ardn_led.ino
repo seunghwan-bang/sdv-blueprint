@@ -19,7 +19,7 @@ unsigned long lastRxMs = 0;
 const unsigned long RX_TIMEOUT_MS = 3000;
 
 int lastBtn = -1;
-int lastMode = -1;w
+int lastMode = -1;
 unsigned long lastBtnChangeMs = 0;
 const unsigned long DEBOUNCE_MS = 30;
 

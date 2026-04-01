@@ -11,7 +11,7 @@
 const int xPin = A0; // Joystick X axis
 const int yPin = A1; // Joystick Y axis
 const int swPin = 8; // Joystick button
-const unsigned long READ_DELAY_MS = 100; // ms
+const unsigned long READ_DELAY_MS = 50; // ms
 
 void setup() {
     Serial.begin(115200);
