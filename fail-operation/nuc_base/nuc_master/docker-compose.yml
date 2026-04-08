@@ -1,0 +1,19 @@
+#configs:
+#  vss_overlay.json:
+#    file: "./spec/vss.json"
+
+services:
+  photo-resistor:
+    build:
+      context: ./serial
+    container_name: photo-resistor
+    #network_mode: "host"
+    devices:
+      - "/dev/arduino_light:/dev/arduino_light"
+    volumes:
+      - ./serial:/app
+    working_dir: /app
+    command: python3 bridge.py
+    environment:
+      PYTHONUNBUFFERED: "1"
+      #MASTER_IP: "192.168.1.2"

@@ -1,0 +1,2 @@
+# Joystick Arduino
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="D885ACA70CB0", SYMLINK+="arduino_light"
