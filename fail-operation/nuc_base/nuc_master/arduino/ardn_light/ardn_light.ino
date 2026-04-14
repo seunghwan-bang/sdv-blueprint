@@ -1,14 +1,24 @@
-int pin = 7;
-int value = 0;
+int analogPin = A0;
+int digitalPin = 7;
 
 void setup() {
-    pinMode(pin, INPUT);
+    pinMode(digitalPin, OUTPUT);
     Serial.begin(115200);
     while (!Serial) { }
 }
 
 void loop() {
-    value = digitalRead(pin);
-    Serial.println(value);
-    delay(500);
+    float cds = analogRead(analogPin);
+    cds = map(cds,0,1023,0,100);
+    cds = constrain(cds, 0, 100);
+    Serial.print("value: ");
+    Serial.println(cds);
+    
+    if (cds > 30) {
+        digitalWrite(digitalPin, HIGH);
+    } else {
+        digitalWrite(digitalPin, LOW);
+    }
+    
+    delay(250);
 }

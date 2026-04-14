@@ -6,7 +6,8 @@ import json
 import time
 import os
 
-PORT_LIGHT = "/dev/arduino_light"
+#PORT_LIGHT = "/dev/arduino_light"
+PORT_LIGHT = "/dev/arduino_block"
 BAUD = 115200
 
 def main(stop_event):
