@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Scenario
+metadata:
+  name: master-scenario-launch
+spec:
+  condition: null
+  action: launch
+  target: master-package
+---
+apiVersion: v1
+kind: Package
+metadata:
+  label: null
+  name: master-package
+spec:
+  pattern:
+    - type: plain
+  models:
+    - name: master-pod
+      node: master
+      resources:
+        volume:
+        network:
+---
+apiVersion: v1
+kind: Model
+metadata:
+  name: master-pod
+  labels:
+    app: master-pod
+spec:
+  hostNetwork: true
+  containers:
+  - name: serial-kuksa-bridge
+    image: localhost/serial-kuksa-bridge:latest
+    command: ["python3", "bridge.py"]
+    env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: MASTER_IP
+      value: "192.168.1.2"
+    volumeMounts:
+    - name: app-source
+      mountPath: /app
+    - name: pullpiri-yaml
+      mountPath: /yaml
+    - name: dev-arduino-joystick
+      mountPath: /dev/arduino_joystick
+    - name: dev-arduino-led
+      mountPath: /dev/arduino_led
+    - name: dev-arduino-gear
+      mountPath: /dev/arduino_gear
+    securityContext:
+      privileged: true
+
+  - name: databroker
+    image: quay.io/eclipse-kuksa/kuksa-databroker:0.6.0
+    command: ["--insecure"]
+    env:
+    - name: KUKSA_DATABROKER_ADDR
+      value: "0.0.0.0"
+    - name: KUKSA_DATABROKER_PORT
+      value: "55555"
+    - name: KUKSA_DATABROKER_METADATA_FILE
+      value: "/vss_overlay.json"
+    - name: RUST_LOG
+      value: "info"
+    volumeMounts:
+    - name: vss-config
+      mountPath: /vss_overlay.json
+
+  volumes:
+  - name: app-source
+    hostPath:
+      path: ./serial-kuksa-bridge
+  - name: pullpiri-yaml
+    hostPath:
+      path: ./pullpiri-yaml/yaml
+  - name: vss-config
+    hostPath:
+      path: ./spec/vss.json
+  - name: dev-arduino-joystick
+    hostPath:
+      path: /dev/arduino_joystick
+  - name: dev-arduino-led
+    hostPath:
+      path: /dev/arduino_led
+  - name: dev-arduino-gear
+    hostPath:
+      path: /dev/arduino_gear
+
+  restartPolicy: OnFailure
