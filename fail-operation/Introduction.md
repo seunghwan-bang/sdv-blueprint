@@ -29,6 +29,7 @@ This makes the scheduling difference visible through physical LED strips connect
 ## Demo Topology
 
 The demo uses two NUCs and four Arduino devices.
+
 <img width="522" height="694" alt="image" src="https://github.com/user-attachments/assets/e792f0a0-cde0-43f0-953f-8ca426b8ac76" />
 
 
