@@ -256,7 +256,6 @@ This blueprint is out of scope for:
 - hardware-specific resource enforcement,
 - and replacement of AUTOSAR Adaptive execution management.
 
-The blueprint should be understood as a QM-level operational orchestration and scheduling demonstration.
 
 ## Why This Blueprint Matters
 
