@@ -2,9 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy bridge code
-COPY kuksa-bridge/bridge.py /app/bridge.py
-COPY kuksa-bridge/.env /app/.env
+# Copy bridge code (빌드 컨텍스트: kuksa-bridge)
+COPY bridge.py /app/bridge.py
+COPY .env /app/.env
 
 # Copy trigger scripts
 COPY script/trigger-on.sh /app/script/trigger-on.sh
