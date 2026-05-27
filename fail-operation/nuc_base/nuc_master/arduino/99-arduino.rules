@@ -1,0 +1,8 @@
+# Joystick Arduino
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="48CA435E506C", SYMLINK+="arduino_joystick"
+
+# LED Arduino
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="F0F5BD507E9C", SYMLINK+="arduino_led"
+
+# Gear Arduino
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="D885ACA7070C", SYMLINK+="arduino_gear"
