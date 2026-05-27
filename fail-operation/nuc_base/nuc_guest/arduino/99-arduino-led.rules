@@ -1,0 +1,5 @@
+# LED Arduino for TIMPANI signal-based control
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="3CDC75F03F08", SYMLINK+="arduino_led_timpani"
+
+# LED Arduino for normal sleep-based control
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{serial}=="3CDC75F04E2C", SYMLINK+="arduino_led_normal"

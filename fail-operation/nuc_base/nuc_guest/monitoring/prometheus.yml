@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 500ms      # LED 주기 500ms에 맞춤
+  evaluation_interval: 500ms
+
+scrape_configs:
+  - job_name: 'led-timpani'
+    static_configs:
+      - targets: ['localhost:9101']  # ← 필요시 guest PC의 IP:9101로 변경
+        labels:
+          container: 'timpani'
+          type: 'realtime'
+
+  - job_name: 'led-normal'
+    static_configs:
+      - targets: ['localhost:9102']  # ← 필요시 guest PC의 IP:9102로 변경
+        labels:
+          container: 'normal'
+          type: 'standard'
+
+# 예시 (guest PC IP가 192.168.0.2인 경우)
+#   - targets: ['192.168.0.2:9101']
+#   - targets: ['192.168.0.2:9102']
+# 또는 환경변수/도커 컴포즈 오버라이드로도 설정 가능
