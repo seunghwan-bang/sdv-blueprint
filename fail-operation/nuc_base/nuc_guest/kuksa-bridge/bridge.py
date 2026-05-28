@@ -27,11 +27,11 @@ workload_running = False
 def trigger_workload_on():
     """Execute shell script to start CPU load workload"""
     try:
-        print(f"→ Executing ON script: {TRIGGER_ON_SCRIPT}")
+        print(f" Executing ON script: {TRIGGER_ON_SCRIPT}")
         
         # Check if script exists
         if not os.path.exists(TRIGGER_ON_SCRIPT):
-            print(f"✗ Script not found: {TRIGGER_ON_SCRIPT}", file=sys.stderr)
+            print(f" Script not found: {TRIGGER_ON_SCRIPT}", file=sys.stderr)
             return False
         
         # Execute shell script with bash
@@ -52,27 +52,27 @@ def trigger_workload_on():
             print(f"   STDERR: {result.stderr.strip()}")
         
         if result.returncode == 0:
-            print(f"✓ ON script executed successfully")
+            print(f" ON script executed successfully")
             return True
         else:
-            print(f"✗ ON script failed with code {result.returncode}", file=sys.stderr)
+            print(f" ON script failed with code {result.returncode}", file=sys.stderr)
             return False
                 
     except subprocess.TimeoutExpired:
-        print(f"✗ ON script execution timeout", file=sys.stderr)
+        print(f" ON script execution timeout", file=sys.stderr)
         return False
     except Exception as e:
-        print(f"✗ Error executing ON script: {e}", file=sys.stderr)
+        print(f" Error executing ON script: {e}", file=sys.stderr)
         return False
 
 def trigger_workload_off():
     """Execute shell script to stop CPU load workload"""
     try:
-        print(f"→ Executing OFF script: {TRIGGER_OFF_SCRIPT}")
+        print(f" Executing OFF script: {TRIGGER_OFF_SCRIPT}")
         
         # Check if script exists
         if not os.path.exists(TRIGGER_OFF_SCRIPT):
-            print(f"✗ Script not found: {TRIGGER_OFF_SCRIPT}", file=sys.stderr)
+            print(f" Script not found: {TRIGGER_OFF_SCRIPT}", file=sys.stderr)
             return False
         
         # Execute shell script with bash
@@ -93,17 +93,17 @@ def trigger_workload_off():
             print(f"   STDERR: {result.stderr.strip()}")
         
         if result.returncode == 0:
-            print(f"✓ OFF script executed successfully")
+            print(f" OFF script executed successfully")
             return True
         else:
-            print(f"✗ OFF script failed with code {result.returncode}", file=sys.stderr)
+            print(f" OFF script failed with code {result.returncode}", file=sys.stderr)
             return False
                 
     except subprocess.TimeoutExpired:
-        print(f"✗ OFF script execution timeout", file=sys.stderr)
+        print(f" OFF script execution timeout", file=sys.stderr)
         return False
     except Exception as e:
-        print(f"✗ Error executing OFF script: {e}", file=sys.stderr)
+        print(f" Error executing OFF script: {e}", file=sys.stderr)
         return False
 
 def toggle_workload():
@@ -112,12 +112,12 @@ def toggle_workload():
     
     if workload_running:
         # Turn OFF
-        print("⚡ Toggle: Turning OFF workload")
+        print(" Toggle: Turning OFF workload")
         if trigger_workload_off():
             workload_running = False
     else:
         # Turn ON
-        print("⚡ Toggle: Turning ON workload")
+        print(" Toggle: Turning ON workload")
         if trigger_workload_on():
             workload_running = True
 
@@ -169,7 +169,7 @@ def main():
     try:
         signal_path = "Vehicle.Cabin.FailOperation.ButtonPressed"
         print(f"Polling {signal_path}...")
-        print("✓ Polling active. Waiting for button events...")
+        print(" Polling active. Waiting for button events...")
         
         # Track previous state to detect changes
         prev_state = None
@@ -181,11 +181,11 @@ def main():
             # Detect state change from False to True (button press)
             if current_state != prev_state:
                 if current_state == True or current_state == "true" or current_state == 1:
-                    print(f"🔘 Button PRESSED detected (toggle trigger)")
+                    print(f" Button PRESSED detected (toggle trigger)")
                     # Execute toggle in a separate thread to avoid blocking
                     threading.Thread(target=toggle_workload, daemon=True).start()
                 elif current_state == False or current_state == "false" or current_state == 0:
-                    print(f"🔘 Button RELEASED (no action)")
+                    print(f" Button RELEASED (no action)")
                 
                 prev_state = current_state
             
