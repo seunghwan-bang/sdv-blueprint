@@ -1,2 +1,3 @@
-arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ardn_block
-arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ardn_light
+arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ardn_stick
+arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ardn_led
+arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ardn_gear
