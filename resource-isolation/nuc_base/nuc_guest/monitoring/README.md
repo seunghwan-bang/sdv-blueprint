@@ -1,7 +1,7 @@
 
 # LED Control Demo - Grafana Monitoring
 
-This is a Grafana monitoring system for visualizing the delay characteristics of TIMPANI vs Normal LED controllers.
+This is a Grafana monitoring system for visualizing LED ON/OFF tick events of TIMPANI vs Normal LED controllers.
 
 ## Architecture
 
@@ -34,10 +34,9 @@ This is a Grafana monitoring system for visualizing the delay characteristics of
 
 | Metric             | Description                                         | Unit  |
 |--------------------|-----------------------------------------------------|-------|
-| `led_delay_ms`     | LED control delay (compared to expected 500ms cycle)| ms    |
+| `led_signal_count` | Total LED toggle count (source for ON/OFF ticks)    | count |
 | `led_interval_ms`  | Actual LED toggle interval                          | ms    |
 | `led_state`        | Current LED state (0=OFF, 1=ON)                     | -     |
-| `led_signal_count` | Total LED toggle count                              | count |
 
 ## Usage
 
@@ -73,10 +72,10 @@ podman run --rm -d stress-ng --cpu 4 --timeout 30s
 
 ## Dashboard Panel Description
 
-### LED Control Delay Comparison
-- Real-time comparison of delay between TIMPANI and Normal controllers
-- You can observe a sharp increase in Normal delay under load
-- Thresholds: 50ms (yellow), 100ms (red)
+### LED ON/OFF Tick Timeline
+- Real-time comparison of ON/OFF toggle ticks between TIMPANI and Normal controllers
+- Tick events are derived from `led_signal_count` increments
+- Spikes (1) indicate a toggle event occurred in that short window
 
 ### LED Toggle Interval
 - Shows actual interval compared to expected 500ms
@@ -84,8 +83,8 @@ podman run --rm -d stress-ng --cpu 4 --timeout 30s
 - Normal interval increases under load
 
 ### Current Stats
-- Shows current delay, signal count, and LED state
-- 1-minute average delay calculation
+- Shows current tick, signal count, and LED state
+- Includes 1-minute average toggle rate
 
 ## Troubleshooting
 
@@ -113,5 +112,5 @@ curl http://localhost:9102/metrics  # normal
 ## Notes
 
 - `network_mode: host` allows containers to access the host network directly
-- Prometheus scrape interval: 500ms (matches LED cycle)
-- Grafana refresh: 500ms (for real-time monitoring)
+- Prometheus scrape interval: 100ms (for finer ON/OFF tick capture)
+- Grafana refresh: 200ms~500ms (for real-time monitoring)
