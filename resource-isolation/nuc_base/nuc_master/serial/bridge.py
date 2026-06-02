@@ -15,13 +15,6 @@ PORT_LED = "/dev/arduino_led"            # ttyACM1 - LED output
 PORT_GEAR = "/dev/arduino_gear"          # ttyACM0 - Gear (log only)
 BAUD = 115200
 
-# Global state management
-# 0: INIT (initial state, first action must be LAUNCH)
-# 1: LAUNCHED (container running, next action must be STOP)
-# -1: STOPPED (container stopped, next action must be LAUNCH)
-global_state = 0
-state_lock = threading.Lock()
-
 def send_to_databroker(client, button_state):
     """Send button state to KUKSA databroker"""
     try:
@@ -58,12 +51,11 @@ def send_yaml_artifact(yaml_path: str):
         print(f"send_yaml_artifact error: {e}", file=sys.stderr)
 
 def handle_gear_yaml(stop_event):
-    """Thread: Monitor gear rotary encoder and send YAML artifacts based on global state
-    State-based direction filtering:
-      state=0 or -1: Only CW allowed → LAUNCH
-      state=1: Only CCW allowed → STOP
+    """Thread: Monitor gear rotary encoder button presses
+    Button pressed at rotation 80 → "0" → LOW LOAD mode
+    Button pressed at rotation 120 → "1" → HIGH LOAD mode
     """
-    global global_state
+    prev_yaml_state = -1
     while not stop_event.is_set():
         try:
             with serial.Serial(PORT_GEAR, BAUD, timeout=1) as s_gear:
@@ -84,55 +76,31 @@ def handle_gear_yaml(stop_event):
                     if not line:
                         continue
                     
-                    # Skip debug messages
-                    if line.startswith("["):
-                        continue
-                    
-                    # Detect CW or CCW
-                    is_ccw = "CCW" in line
-                    is_cw = "CW" in line and not is_ccw
-                    
-                    if not is_ccw and not is_cw:
-                        continue
-                    
-                    print(f"Gear signal: {line}")
-                    
-                    # State-based direction filtering
-                    with state_lock:
-                        current = global_state
-                        
-                        if current == 0 or current == -1:
-                            # INIT or STOPPED: Only CW allowed
-                            if is_cw:
-                                print(f"[Gear] State={current} + CW → LAUNCH (state becomes 1)")
-                                send_yaml_artifact('/yaml/container-launch.yaml')
-                                global_state = 1
-                                try:
-                                    s_gear.write(b"PURPLE\n")
-                                except Exception as e:
-                                    print(f"Failed to send PURPLE to Gear: {e}", file=sys.stderr)
-                            elif is_ccw:
-                                print(f"[Gear] State={current} + CCW → IGNORED (LED RED)")
-                                try:
-                                    s_gear.write(b"RED\n")
-                                except Exception as e:
-                                    print(f"Failed to send RED to Gear: {e}", file=sys.stderr)
-                        elif current == 1:
-                            # LAUNCHED: Only CCW allowed
-                            if is_ccw:
-                                print(f"[Gear] State={current} + CCW → STOP (state becomes -1)")
-                                send_yaml_artifact('/yaml/container-stop.yaml')
-                                global_state = -1
-                                try:
-                                    s_gear.write(b"GREEN\n")
-                                except Exception as e:
-                                    print(f"Failed to send GREEN to Gear: {e}", file=sys.stderr)
-                            elif is_cw:
-                                print(f"[Gear] State={current} + CW → IGNORED (LED RED)")
-                                try:
-                                    s_gear.write(b"RED\n")
-                                except Exception as e:
-                                    print(f"Failed to send RED to Gear: {e}", file=sys.stderr)
+                    # Only process "0" or "1" from button presses
+                    if line.isdigit():
+                        if line == "0":
+                            if prev_yaml_state == 0:
+                                print("[Gear] Already in LOW LOAD mode, skipping")
+                                continue
+                            prev_yaml_state = 0
+                            print("=" * 50)
+                            print("[Gear] LOW LOAD MODE (Normal)")
+                            print("=" * 50)
+                            send_yaml_artifact('/yaml/container-stop.yaml')
+                            time.sleep(1)
+                        elif line == "1":
+                            if prev_yaml_state == 1:
+                                print("[Gear] Already in HIGH LOAD mode, skipping")
+                                continue
+                            prev_yaml_state = 1
+                            print("=" * 50)
+                            print("[Gear] HIGH LOAD MODE (Timpani)")
+                            print("=" * 50)
+                            send_yaml_artifact('/yaml/container-launch.yaml')
+                            time.sleep(1)
+                    else:
+                        # Log any other messages
+                        print(f"[Gear] Message: {line}")
                     
                     time.sleep(0.05)
         except (serial.SerialException, OSError) as e:
