@@ -1,4 +1,4 @@
-# Fail Operation Demo - NUC Master
+# Resource isolation Demo - NUC Master
 
 This folder contains the NUC Master setup for the fail-operation demonstration.
 
